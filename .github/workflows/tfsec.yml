@@ -1,4 +1,4 @@
-name: TFSec
+name: tfsec
 on:
   push:
     branches:
@@ -14,9 +14,9 @@ jobs:
         uses: actions/checkout@master
 
       - name: tfsec
-        uses: tfsec/tfsec-sarif-action@main
+        uses: tfsec/tfsec-sarif-action@master
         with:
-          sarif_file: tfsec.sarif         
+          sarif_file: tfsec.sarif          
 
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v1
