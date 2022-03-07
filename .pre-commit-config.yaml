@@ -2,10 +2,17 @@ repos:
 - repo: https://github.com/antonbabenko/pre-commit-terraform
   rev: 'v1.64.0'
   hooks:
-#    - id: checkov
+    - id: checkov
+      args: [
+        "--skip-check", "CKV_AWS_18", 
+        "--skip-check", "CKV_AWS_19", 
+        "--skip-check", "CKV_AWS_21", 
+        "--skip-check", "CKV_AWS_144",  
+        "--skip-check", "CKV_AWS_145",
+      ]
     - id: terraform_fmt
     - id: terraform_validate
     - id: terraform_tflint
       args:
         - --args=--enable-rule=terraform_documented_variables
-#    - id: terraform_tfsec
+    - id: terraform_tfsec

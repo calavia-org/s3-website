@@ -1,9 +1,49 @@
 provider "aws" {
   region = var.aws_region
 }
+resource "aws_kms_key" "app_key" {
+  description = "This key is used to encrypt buckets"
+  tags = {
+    app = "${var.site_domain}"
+  }
+  enable_key_rotation = true
+}
 
 resource "aws_s3_bucket" "site" {
   bucket = var.site_domain
+}
+
+resource "aws_s3_bucket_versioning" "site" {
+  bucket = aws_s3_bucket.site.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "site" {
+  bucket = aws_s3_bucket.site.bucket
+
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_key.app_key.arn
+      sse_algorithm     = "aws:kms"
+    }
+  }
+}
+resource "aws_s3_bucket_public_access_block" "site" {
+  bucket = aws_s3_bucket.site.id
+
+  ignore_public_acls  = true
+  block_public_acls   = true
+  block_public_policy = true
+
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_logging" "site" {
+  bucket        = aws_s3_bucket.site.id
+  target_bucket = aws_s3_bucket.log_bucket.id
+  target_prefix = "log/"
 }
 
 # resource "aws_s3_bucket_website_configuration" "site" {
@@ -57,10 +97,4 @@ resource "aws_s3_bucket" "site" {
 #   redirect_all_requests_to {
 #     host_name = var.site_domain
 #   }
-# }
-
-# resource "aws_iam_openid_connect_provider" "github" {
-#   url             = "https://token.actions.githubusercontent.com"
-#   client_id_list  = ["sts.amazonaws.com"]
-#   thumbprint_list = ["a031c46782e6e6c662c2c87c76da9aa62ccabd8e"]
 # }
