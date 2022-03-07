@@ -1,0 +1,18 @@
+{
+    "name": "terraform-codespaces",
+    "settings": {
+      "terminal.integrated.profiles.linux": {
+        "zsh (login)": {
+          "path": "zsh",
+          "args": ["-l"]
+        }
+      }
+    },
+    "extensions": [
+      "eamodio.gitlens",
+      "davidanson.vscode-markdownlint",
+      "hashicorp.terraform",
+    ],
+    
+    "postCreateCommand": "/bin/bash ./.devcontainer/post-install.sh"
+  }

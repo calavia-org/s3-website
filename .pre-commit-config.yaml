@@ -1,0 +1,11 @@
+repos:
+- repo: https://github.com/antonbabenko/pre-commit-terraform
+  rev: 'v1.64.0'
+  hooks:
+#    - id: checkov
+    - id: terraform_fmt
+    - id: terraform_validate
+    - id: terraform_tflint
+      args:
+        - --args=--enable-rule=terraform_documented_variables
+#    - id: terraform_tfsec
