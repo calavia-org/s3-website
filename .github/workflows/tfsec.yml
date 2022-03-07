@@ -1,4 +1,4 @@
-name: tfsec
+name: TFSec
 on:
   push:
     branches:
