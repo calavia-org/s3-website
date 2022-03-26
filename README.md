@@ -1,5 +1,7 @@
 # s3-website-tf
 
+## Setup project
+
 ## References
 
 - https://learn.hashicorp.com/tutorials/terraform/cloudflare-static-website?in=terraform/aws
