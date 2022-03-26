@@ -9,10 +9,11 @@
       }
     },
     "extensions": [
-      "eamodio.gitlens",
-      "davidanson.vscode-markdownlint",
-      "hashicorp.terraform",
-    ],
+		"eamodio.gitlens",
+		"davidanson.vscode-markdownlint",
+		"hashicorp.terraform",
+		"Bridgecrew.checkov"
+	],
     
     "postCreateCommand": "/bin/bash ./.devcontainer/post-install.sh"
   }

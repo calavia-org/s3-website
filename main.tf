@@ -46,22 +46,22 @@ resource "aws_s3_bucket_logging" "site" {
   target_prefix = "log/"
 }
 
-# resource "aws_s3_bucket_website_configuration" "site" {
-#   bucket = aws_s3_bucket.site.id
+resource "aws_s3_bucket_website_configuration" "site" {
+  bucket = aws_s3_bucket.site.id
 
-#   # index_document {
-#   #   suffix = "index.html"
-#   # }
+  index_document {
+    suffix = "index.html"
+  }
 
-#   # error_document {
-#   #   key = "error.html"
-#   # }
-# }
+  error_document {
+    key = "error.html"
+  }
+}
 
-# resource "aws_s3_bucket_acl" "site" {
-#   bucket = aws_s3_bucket.site.id
-#   acl = "public-read"
-# }
+resource "aws_s3_bucket_acl" "site" {
+  bucket = aws_s3_bucket.site.id
+  acl    = "public-read"
+}
 
 # resource "aws_s3_bucket_policy" "site" {
 #   bucket = aws_s3_bucket.site.id
