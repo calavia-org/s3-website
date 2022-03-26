@@ -1,0 +1,17 @@
+name: "Checkov"
+
+on: [push]
+jobs:
+  checkov-job:
+    runs-on: ubuntu-latest
+    name: Checkov
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@master
+
+      - name: Run Checkov action
+        id: checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          skip_check: CKV_AWS_18,CKV_AWS_19,CKV_AWS_21,CKV_AWS_144,CKV_AWS_145
+
