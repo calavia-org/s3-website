@@ -10,6 +10,10 @@ repos:
         "--skip-check", "CKV_AWS_144",  
         "--skip-check", "CKV_AWS_145",
       ]
+    # - id: infracost_breakdown
+    #   args:
+    #     - --args=--path=./env/dev
+    #   verbose: true
     - id: terraform_fmt
     - id: terraform_validate
     - id: terraform_tflint
