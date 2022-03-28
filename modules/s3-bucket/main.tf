@@ -34,3 +34,10 @@ resource "aws_s3_bucket_public_access_block" "bucket" {
 
   restrict_public_buckets = true
 }
+
+resource "aws_s3_bucket_logging" "bucket" {
+  count         = var.log_bucket_id != "" ? 1 : 0
+  bucket        = aws_s3_bucket.bucket.id
+  target_bucket = var.log_bucket_id
+  target_prefix = var.log_path
+}

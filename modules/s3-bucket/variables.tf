@@ -13,6 +13,18 @@ variable "kms_key_id" {
   description = "The KMS Key identifier."
 }
 
+variable "log_bucket_id" {
+  type        = string
+  description = "The bucket id to log into."
+  default     = ""
+}
+variable "log_path" {
+  type        = string
+  description = "The path inside bucket to log."
+  default     = "log/"
+}
+
+
 variable "tags" {
   description = "Tags to set on the bucket."
   type        = map(string)
