@@ -24,7 +24,6 @@ variable "log_path" {
   default     = "log/"
 }
 
-
 variable "tags" {
   description = "Tags to set on the bucket."
   type        = map(string)
