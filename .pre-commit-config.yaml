@@ -4,6 +4,7 @@ repos:
   hooks:
     - id: checkov
       args: [
+        "--compact",
         "--skip-check", "CKV_AWS_18", 
         "--skip-check", "CKV_AWS_19", 
         "--skip-check", "CKV_AWS_21", 

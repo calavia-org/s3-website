@@ -13,6 +13,16 @@ variable "certificate_arn" {
   type        = string
 }
 
+variable "cors_config" {
+  description = "Site configuration paramters"
+  type = object({
+    allowed_headers = list(string)
+    allowed_methods = list(string)
+    allowed_origins = list(string)
+    expose_headers  = list(string)
+    max_age_seconds = number
+  })
+}
 variable "logging_bucket" {
   description = "S3 bucket to Cloudfront log into"
   type        = string
