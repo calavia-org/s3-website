@@ -3,13 +3,21 @@ variable "aws_region" {
   description = "The AWS region to put the bucket into"
 }
 
+variable "hosted_zone" {
+  type        = string
+  description = "Main DNS zone name"
+}
+
 variable "site_domain" {
   type        = string
   description = "The domain name to use for the static site"
 }
 
-variable "kms_key" {
-  type        = string
-  description = "The KMS Key identifier"
+variable "tags" {
+  description = "Default"
+  type        = map(string)
+  default = {
+    Terraform = "true"
+  }
 }
 

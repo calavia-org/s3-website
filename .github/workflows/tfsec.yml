@@ -13,7 +13,7 @@ jobs:
       - name: Clone repo
         uses: actions/checkout@master
 
-      - name: tfsec
+      - name: tfsec sarif output
         uses: tfsec/tfsec-sarif-action@master
         with:
           sarif_file: tfsec.sarif          
@@ -23,3 +23,8 @@ jobs:
         with:
           # Path to SARIF file relative to the root of the repository
           sarif_file: tfsec.sarif
+
+      - name: tfsec pr commenter
+        uses: tfsec/tfsec-pr-commenter-action@main
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
