@@ -1,15 +1,36 @@
 #!/bin/sh
-
 DEBIAN_FRONTEND=noninteractive
-sudo apt-get update
-sudo apt-get install -y --no-install-recommends apt-utils dialog dnsutils httpie wget unzip curl jq
-DEBIAN_FRONTEND=dialog
 
-LATEST_URL=$(curl -sL https://releases.hashicorp.com/terraform/index.json | jq -r '.versions[].builds[].url' | egrep -v 'rc|beta|alpha' | egrep 'linux.*amd64'  | tail -1)
-curl ${LATEST_URL} > /tmp/terraform.zip
+sudo apt-get -qq update && sudo apt-get -qq install -y --no-install-recommends \
+  gnupg \
+  software-properties-common \
+  curl \
+  jq \
+  apt-transport-https \
+  ca-certificates
 
-cd /usr/local/bin && sudo unzip /tmp/terraform.zip
-echo "Installed: `/usr/local/bin/terraform version`"
+curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+curl -fsSL  https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+
+sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+# Focal repository not yet available
+#sudo apt-add-repository "deb [arch=amd64] https://apt.kubernetes.io/ $(lsb_release -cs) main"
+sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+
+sudo apt-get -qq update && sudo apt-get -qq install -y --no-install-recommends \
+  terraform \
+  kubectl
+
+mkdir -p /home/codespace/.terraform.d/
+cat << EOF > /home/codespace/.terraform.d/credentials.tfrc.json
+{
+  "credentials": {
+    "app.terraform.io": {
+      "token": "$TF_API_TOKEN"
+    }
+  }
+}
+EOF
 
 pip install --upgrade pip
 pip install pre-commit checkov
@@ -18,4 +39,4 @@ pip install pre-commit checkov
 curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 go install github.com/aquasecurity/tfsec/cmd/tfsec@latest
 
-pre-commit install
+cd $CODESPACE_VSCODE_FOLDER && pre-commit install -f
