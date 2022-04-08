@@ -4,6 +4,11 @@ resource "aws_kms_key" "app_key" {
   tags                = var.tags
 }
 
+data "aws_route53_zone" "dns_zone" {
+  name         = var.hosted_zone
+  private_zone = true
+}
+
 # SSL Certificate
 resource "aws_acm_certificate" "ssl_certificate" {
   provider                  = aws.acm_provider

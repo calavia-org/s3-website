@@ -3,6 +3,11 @@ variable "aws_region" {
   description = "The AWS region to put the bucket into"
 }
 
+variable "hosted_zone" {
+  type        = string
+  description = "Main DNS zone name"
+}
+
 variable "site_domain" {
   type        = string
   description = "The domain name to use for the static site"
