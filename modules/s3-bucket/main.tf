@@ -1,4 +1,5 @@
 resource "aws_s3_bucket" "bucket" {
+  # checkov:skip=CKV_AWS_144: ADD REASON
   bucket = var.bucket_name
   tags   = var.tags
 }

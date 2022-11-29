@@ -6,7 +6,7 @@ resource "aws_kms_key" "app_key" {
 
 data "aws_route53_zone" "dns_zone" {
   name         = var.hosted_zone
-  private_zone = true
+  private_zone = false
 }
 
 # SSL Certificate

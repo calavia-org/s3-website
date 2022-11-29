@@ -20,4 +20,4 @@ repos:
     - id: terraform_tflint
       args:
         - --args=--enable-rule=terraform_documented_variables
-    - id: terraform_tfsec
+    #- id: terraform_tfsec

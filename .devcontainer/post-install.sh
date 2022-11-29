@@ -19,7 +19,7 @@ sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
 
 sudo apt-get -qq update && sudo apt-get -qq install -y --no-install-recommends \
   terraform \
-  kubectl
+  plantuml
 
 mkdir -p /home/codespace/.terraform.d/
 cat << EOF > /home/codespace/.terraform.d/credentials.tfrc.json
