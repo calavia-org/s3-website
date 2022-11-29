@@ -1,18 +1,30 @@
 {
-    "name": "terraform-codespaces",
-    "settings": {
-      "terminal.integrated.profiles.linux": {
-        "zsh (login)": {
-          "path": "zsh",
-          "args": ["-l"]
-        }
+  "name": "terraform-codespaces",
+  "settings": {
+    "terminal.integrated.profiles.linux": {
+      "zsh (login)": {
+        "path": "zsh",
+        "args": [
+          "-l"
+        ]
       }
     },
-    "extensions": [
-      "eamodio.gitlens",
-      "davidanson.vscode-markdownlint",
-      "hashicorp.terraform",
-    ],
-    
-    "postCreateCommand": "/bin/bash ./.devcontainer/post-install.sh"
-  }
+    "plantuml.preview": "/usr/bin/plantuml",
+    "plantuml.exportOutDir": "docs/img",
+    "plantuml.exportSubFolder": false,
+    "plantuml.diagramsRoot": "docs/diagrams",
+    "plantuml.exportFormat": "png",
+    "plantuml.render": "Local"
+  },
+  "extensions": [
+    "eamodio.gitlens",
+    "davidanson.vscode-markdownlint",
+    "hashicorp.terraform",
+    "jebbs.plantuml",
+    "qhoekman.language-plantuml",
+    "clysto.plantuml",
+    "well-ar.plantuml",
+    "yzhang.markdown-all-in-one",
+  ],
+  "postCreateCommand": "/bin/bash ./.devcontainer/post-install.sh"
+}

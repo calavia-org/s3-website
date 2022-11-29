@@ -1,0 +1,25 @@
+digraph flow {
+    compound=true;
+
+    subgraph {
+        label = "S3 Module";
+        "s3_bkt" [label="bucket", labelhref="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket"];
+        "s3_bkt_v" [label="versioning", labelhref=""];
+        "s3_bkt_sse" [label="encryption", labelhref=""];
+        "s3_bkt_acl" [label="ACL", labelhref=""];
+        "s3_bkt_pab" [label="public access block", labelhref=""];
+        "s3_bkt_log" [label="logging", labelhref=""];
+        "s3_bkt" -> "s3_bkt_v" -> "s3_bkt_sse" -> "s3_bkt_acl" -> "s3_bkt_pab" -> "s3_bkt_log"
+    }
+    subgraph {
+        label = "S3 WebSite";
+        website_configuration;
+        cors;
+        
+    }
+    subgraph {
+        label = "S3 Cloudfront";
+        cloudfront_distribution
+    }
+    main -> {"s3_bkt" website_configuration}
+}

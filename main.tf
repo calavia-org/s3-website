@@ -1,100 +1,98 @@
-provider "aws" {
-  region = var.aws_region
-}
 resource "aws_kms_key" "app_key" {
-  description = "This key is used to encrypt buckets"
-  tags = {
-    app = "${var.site_domain}"
-  }
+  description         = "This key is used to encrypt buckets"
   enable_key_rotation = true
+  tags                = var.tags
 }
 
-resource "aws_s3_bucket" "site" {
-  bucket = var.site_domain
+data "aws_route53_zone" "dns_zone" {
+  name         = var.hosted_zone
+  private_zone = false
 }
 
-resource "aws_s3_bucket_versioning" "site" {
-  bucket = aws_s3_bucket.site.id
-  versioning_configuration {
-    status = "Enabled"
+# SSL Certificate
+resource "aws_acm_certificate" "ssl_certificate" {
+  provider                  = aws.acm_provider
+  domain_name               = var.site_domain
+  subject_alternative_names = ["www.${var.site_domain}"]
+  validation_method         = "EMAIL"
+  #validation_method = "DNS"
+
+  tags = var.tags
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
-resource "aws_s3_bucket_server_side_encryption_configuration" "site" {
-  bucket = aws_s3_bucket.site.bucket
+# Uncomment the validation_record_fqdns line if you do DNS validation instead of Email.
+resource "aws_acm_certificate_validation" "cert_validation" {
+  provider        = aws.acm_provider
+  certificate_arn = aws_acm_certificate.ssl_certificate.arn
+  #validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
+}
 
-  rule {
-    apply_server_side_encryption_by_default {
-      kms_master_key_id = aws_kms_key.app_key.arn
-      sse_algorithm     = "aws:kms"
-    }
+
+
+module "s3_log_bucket" {
+  source = "./modules/s3-bucket"
+
+  bucket_acl  = "log-delivery-write"
+  bucket_name = "log.${var.site_domain}"
+  kms_key_id  = aws_kms_key.app_key.arn
+
+  tags = {
+    Terraform = "true"
+    Site      = var.site_domain
   }
 }
-resource "aws_s3_bucket_public_access_block" "site" {
-  bucket = aws_s3_bucket.site.id
 
-  ignore_public_acls  = true
-  block_public_acls   = true
-  block_public_policy = true
+module "s3_root_bucket" {
+  source = "./modules/s3-bucket"
 
-  restrict_public_buckets = true
+  bucket_acl  = "private"
+  bucket_name = var.site_domain
+  kms_key_id  = aws_kms_key.app_key.arn
+
+  tags = {
+    Terraform = "true"
+    Site      = var.site_domain
+  }
 }
 
-resource "aws_s3_bucket_logging" "site" {
-  bucket        = aws_s3_bucket.site.id
-  target_bucket = aws_s3_bucket.log_bucket.id
-  target_prefix = "log/"
+module "s3_www_bucket" {
+  source = "./modules/s3-bucket"
+
+  bucket_acl  = "private"
+  bucket_name = "www.${var.site_domain}"
+  kms_key_id  = aws_kms_key.app_key.arn
+
+  tags = {
+    Terraform = "true"
+    Site      = var.site_domain
+  }
 }
 
-# resource "aws_s3_bucket_website_configuration" "site" {
-#   bucket = aws_s3_bucket.site.id
+module "s3_root_website_config" {
+  source    = "./modules/s3-website"
+  bucket_id = module.s3_root_bucket.id
 
-#   # index_document {
-#   #   suffix = "index.html"
-#   # }
+  redirect_all_request_to_target = {
+    host_name = "www.${var.site_domain}"
+    protocol  = "https"
+  }
+}
 
-#   # error_document {
-#   #   key = "error.html"
-#   # }
-# }
+module "s3_www_website_config" {
+  source    = "./modules/s3-website"
+  bucket_id = module.s3_www_bucket.id
 
-# resource "aws_s3_bucket_acl" "site" {
-#   bucket = aws_s3_bucket.site.id
-#   acl = "public-read"
-# }
-
-# resource "aws_s3_bucket_policy" "site" {
-#   bucket = aws_s3_bucket.site.id
-
-#   policy = jsonencode({
-#     Version = "2012-10-17"
-#     Statement = [
-#       {
-#         Sid       = "PublicReadGetObject"
-#         Effect    = "Allow"
-#         Principal = "*"
-#         Action    = "s3:GetObject"
-#         Resource = [
-#           aws_s3_bucket.site.arn,
-#           "${aws_s3_bucket.site.arn}/*",
-#         ]
-#       },
-#     ]
-#   })
-# }
-
-# resource "aws_s3_bucket" "www" {
-#   bucket = "www.${var.site_domain}"
-# }
-
-# resource "aws_s3_bucket_acl" "www" {
-#   bucket = aws_s3_bucket.www.id
-#   acl = "private"
-# }
-
-# resource "aws_s3_bucket_website_configuration" "www" {
-#   bucket = aws_s3_bucket.site.id
-#   redirect_all_requests_to {
-#     host_name = var.site_domain
-#   }
-# }
+  config = {
+    index_document  = "index.html"
+    error_document  = "error.html"
+    allowed_headers = ["Authorization", "Content-Length"]
+    allowed_methods = ["GET"]
+    allowed_origins = ["https://www.${var.site_domain}"]
+    expose_headers  = []
+    max_age_seconds = 3000
+  }
+}
